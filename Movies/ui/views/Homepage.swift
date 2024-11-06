@@ -20,6 +20,15 @@ class Homepage: UIViewController {
         movies.append(m1)
         movies.append(m2)
     }
+
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "toDetail" {
+            if let movie = sender as? Movie {
+                let vc = segue.destination as! MovieDetailViewController
+                vc.movie = movie
+            }
+        }
+    }
 }
 
 extension Homepage: UITableViewDataSource, UITableViewDelegate {
@@ -42,5 +51,28 @@ extension Homepage: UITableViewDataSource, UITableViewDelegate {
             }
         }
         return cell
+    }
+
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let movie = movies[indexPath.row]
+        performSegue(withIdentifier: "toDetail", sender: movie)
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
+
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { _, _, _ in
+            let movie = self.movies[indexPath.row]
+            let alert = UIAlertController(title: "Delete", message: "Are you sure you want to delete \(movie.title ?? "No title")", preferredStyle: .alert)
+            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+            alert.addAction(cancelAction)
+
+            let yesAction = UIAlertAction(title: "Yes", style: .destructive) { _ in
+                self.movies.remove(at: indexPath.row)
+                tableView.reloadData()
+            }
+            alert.addAction(yesAction)
+            self.present(alert, animated: true, completion: nil)
+        }
+        return UISwipeActionsConfiguration(actions: [deleteAction])
     }
 }

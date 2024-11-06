@@ -16,6 +16,12 @@ class MovieDetailViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        if let m = movie {
+            titleTF.text = m.title
+            ratingTF.text = "\(m.critics_rating!)"
+            studioTF.text = m.studio
+        }
     }
 
     @IBAction func updateButton(_ sender: UIButton) {
