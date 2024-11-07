@@ -20,6 +20,10 @@ class Homepage: UIViewController {
         movies.append(m1)
         movies.append(m2)
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+    }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "toDetail" {
