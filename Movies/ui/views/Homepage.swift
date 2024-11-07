@@ -10,19 +10,21 @@ import UIKit
 class Homepage: UIViewController {
     @IBOutlet var moviesTableView: UITableView!
     var movies: [Movie] = []
+    var viewModel = HomepageViewModel()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         moviesTableView.dataSource = self
         moviesTableView.delegate = self
-        let m1 = Movie(movie_id: 1, title: "The Shawshank Redemption", studio: "ABC", thumbnail: "abc.jpg", critics_rating: 9.3)
-        let m2 = Movie(movie_id: 2, title: "Bla bla", studio: "ACD", thumbnail: "abc.jpg", critics_rating: 9.2)
-        movies.append(m1)
-        movies.append(m2)
+
+        _ = viewModel.moviesList.subscribe(onNext: { movies in
+            self.movies = movies
+            self.moviesTableView.reloadData()
+        })
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+        viewModel.getMovies()
     }
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -44,16 +46,9 @@ extension Homepage: UITableViewDataSource, UITableViewDelegate {
         let movie = movies[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: "movieCell", for: indexPath) as! MovieTableViewCell
         cell.labelTitle.text = movie.title
-        cell.labelRating.text = "\(movie.critics_rating!)"
+        cell.labelRating.text = "\(movie.rating!)"
         cell.labelStudio.text = movie.studio
-        if let url = URL(string: movie.thumbnail ?? "") {
-            do {
-                let data = try Data(contentsOf: url)
-                cell.imageThumbnail.image = UIImage(data: data)
-            } catch {
-                print("Error loading image")
-            }
-        }
+
         return cell
     }
 
@@ -71,8 +66,7 @@ extension Homepage: UITableViewDataSource, UITableViewDelegate {
             alert.addAction(cancelAction)
 
             let yesAction = UIAlertAction(title: "Yes", style: .destructive) { _ in
-                self.movies.remove(at: indexPath.row)
-                tableView.reloadData()
+                self.viewModel.delete(movie_id: movie.movie_id!)
             }
             alert.addAction(yesAction)
             self.present(alert, animated: true, completion: nil)

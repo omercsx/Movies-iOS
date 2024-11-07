@@ -6,4 +6,8 @@
 //
 
 class AddMovieViewModel {
+    var mrepo = MoviesDAORepository()
+    func save(title: String, rating: String, studio: String) {
+        mrepo.save(title: title, rating: rating, studio: studio)
+    }
 }

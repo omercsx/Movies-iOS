@@ -13,24 +13,21 @@ class MovieDetailViewController: UIViewController {
     @IBOutlet var studioTF: UITextField!
 
     var movie: Movie?
+    var viewModel = MovieDetailViewModel()
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
         if let m = movie {
             titleTF.text = m.title
-            ratingTF.text = "\(m.critics_rating!)"
+            ratingTF.text = "\(m.rating!)"
             studioTF.text = m.studio
         }
     }
 
     @IBAction func updateButton(_ sender: UIButton) {
         if let title = titleTF.text, let rating = ratingTF.text, let studio = studioTF.text, let m = movie {
-            update(movie_id: m.movie_id!, title: title, rating: rating, studio: studio)
+            viewModel.update(movie_id: m.movie_id!, title: title, rating: rating, studio: studio)
         }
-    }
-
-    func update(movie_id: Int, title: String, rating: String, studio: String) {
-        print("Updating movie with id: \(movie_id) \nTitle: \(title) \nRating: \(rating) \nStudio: \(studio)")
     }
 }
